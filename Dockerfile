@@ -1,3 +1,5 @@
+# to run GF if you don't want to install it, or if it's too bothersome
+# to do it on your GNU/Linux distro.
 FROM debian:stable
 
 # to build image, cd into its directory and run:
