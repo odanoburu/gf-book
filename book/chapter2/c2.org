@@ -1,0 +1,195 @@
+* BNF
+  Each line in a BNF grammar is a labelled rule, which defines a
+  production for some category. The general form of a rule is:
+  
+  : Label . Category ::= Production
+  
+  where a production consists of categories (unquoted identifiers) and
+  tokens (quoted strings).
+
+  - A BNF grammar can be seen as a declarative program, which defines
+    two operations: generation and parsing.
+
+  - =parse= (p) returns an abstract syntax tree
+
+  - BNF does not allow us to make correspondences between grammars for
+    the same domain in different languages
+* GF intro
+  solution: use GF. GF separates abstract syntax from linearization
+  (concrete syntax). For example, the predication rule:
+
+  : Pred. Comment ::= Item "is" Quality
+
+  now becomes two rules: 
+
+  : fun Pred : Item -> Quality -> Comment ;
+  : lin Pred item quality = item ++ "is" ++ quality ;
+
+  The first rule, marked fun, defines Pred as a function for building
+  trees. This function has a type, which corresponds to the category
+  skeleton of the BNF rule. The type of Pred has Comment as its value
+  type and Item and Quality as its two argument types.
+
+  The second rule, marked lin, defines the linearization of Pred in
+  terms of the linearizations of its two arguments. These
+  linearizations are represented by the two variables item and
+  quality. These variable names are chosen purely in documentation
+  purpose; x and y would work quite as well.
+
+  In general terms, the separation of concrete and abstract syntax
+  allows three deviations from context-free grammar: 
+- permutation: changing the order of constituents 
+- [[Suppression][suppression]]: omitting constituents
+- reduplication: repeating constituents
+
+** GF module system
+   The two main types of modules are abstract syntax and concrete
+   syntax. The fun rules belong to abstract syntax modules, and the
+   lin rules to concrete syntax modules. A multilingual grammar is a
+   system with one abstract syntax and any number of concrete
+   syntaxes.
+
+   modules in GF have two main parts:
+   - a module header indicating the module type (abstract) and the
+    module name (Food);
+   - a module body consisting of judgements.
+  
+** GF syntax
+   BNF grammars have just one kind of rules, whereas full GF has many
+   kinds, classified under different *forms of judgement* (judgement =
+   definition, declaration, rule).
+
+   the example Food abstract grammar has judgements of three forms:
+   - flags, flag definitions, here of the flag =startcat=, which selects
+     the start category, i.e. the one in which parsing and generation
+     are performed by default;
+   - =cat=, category declarations, telling what categories (types of
+     trees) there are;
+   - =fun=, function declarations, telling what tree building functions
+     there are.
+
+   while the example Food concrete grammar has judgements of two forms:
+   - =lincat=, linearization type definitions, saying what type of
+     objects linearization produces from trees of each category;
+   - =lin=, linearization rules, telling how trees are linearized.
+
+   A concrete syntax is *complete* with respect to an abstract syntax,
+   if it contains:
+   - a lincat for each cat;
+   - a lin for each fun.
+
+   It is *well-typed* if:
+   - all types used in lincat judgements are valid linearization
+     types;
+   - all linearization rules define well-typed functions.
+
+   *Well-typed* functions in lin rules are defined in terms of the
+   linearization types: if
+   : fun f : A1 -> ... -> An -> A
+   then
+   : lin f x1 ... xn = t
+   if t is an object of the linearization type of A under the
+   assumption that each xi is an object of the linearization type of
+   Ai.
+
+   Quoted string literals ("foo") are of type =Str=, and the
+   concatenation (=++=) of two Strs is likewise of type =Str=.
+
+   *Judgements* are terminated by semicolons. A shorthand permits the
+   sharing of the keyword in subsequent judgements, for example:
+   : catC;D === cat C; cat D
+
+   Each judgement introduces a *name*, which is the first identifier in
+   the judgement. Each name can only be introduced once in the same
+   module (that is, as the first identifier in a judgement); local
+   variables such as those following the name introduced in a lin
+   judgement can be reused in other judgements.
+
+   Names are in *scope* in the rest of the module, i.e. usable in the
+   other judgements of the module (subject to type restrictions, of
+   course). The order of judgements in a module is free. In
+   particular, a name need not be introduced before it is used, and
+   judgements of the same form need not be grouped together.
+
+   In language-theoretical terms, GF is stronger than context-free in
+   *weak generative capacity*, i.e. the capacity to define sets of
+   strings. Suppression and reduplication have to do with the *strong
+   generative capacity*, i.e. the capacity to define relations between
+   trees and strings, and not just strings.
+
+** Suppression
+   The easiest way to add pronouns to the food grammar is to treat
+   them as Item expressions. Since only food stuff is addressed, no
+   human beings, it is enough to add the rules:
+
+   : fun Pron : Item
+   : lin Pron = "it"
+
+   But what do pronouns mean? A rough explanation is that they replace
+   other noun phrases, which serve as their referents. The referent is
+   typically a noun phrase used a short time before. The way to
+   express this semantics in GF is to make noun phrases into hidden
+   arguments of trees, i.e. arguments that are present in the abstract
+   syntax but suppressed in the concrete syntax:
+
+   : fun Pron : Item -> Item
+   : lin Pron r = "it"
+   
+   The argument r suppressed in linearization indicates the referent
+   of the pronoun, which is needed for the full semantic analysis of
+   the pronoun.  In parsing, GF returns metavariables for suppressed
+   arguments, indicated by question marks:
+
+   : > parse "it is very expensive"
+   : Pred (Pron ?) (Very Expensive)
+
+   These metavariables can be processed by further analysis of syntax
+   trees, such as anaphora resolution in the case of pronouns.
+
+   : > gr Pred (This ?) Italian -number=10 | lin
+   : this wine is Italian
+   : ...
+
+** Free Variation
+   GF has a notion of free variation: one and the same abstract syntax
+   tree can map to several concrete syntax objects. The operator =|=
+   is used for separating alternatives in free variation. Thus the
+   English linearization rule for Delicious in Figure 13 could be
+   extended to:
+
+   : lin Delicious = "delicious" I "exquisite" I "tasty"
+
+   without extending the abstract syntax.
+
+   *note*: In linguistics, a common wisdom is that "there is no free
+   variation".  By this it is meant that whenever two expressions are
+   different, there is some difference in their meaning or at least
+   their stylistic value.
+
+   Now, an application grammar in GF is a semantic grammar, in which
+   language is described on a certain level of abstraction determined
+   by the abstract syntax. If delicious and exquisite are equivalent
+   on this abstraction level, they can be treated as variants even
+   though they might be different in some other respects.
+
+** TODO Ambiguity
+   By using free variation, a tree can be given several
+   linearizations. The opposite direction is even more common: a
+   string can have several trees.  This phenomenon is known as
+   *ambiguity*.
+
+   - [ ] c2e9
+
+** Problems so far
+   The step from BNF to GF has given us two things. First, we are now
+   able to share an abstract syntax between languages that have
+   different word orders. Secondly, we have a higher expressive power
+   even language-theoretically: we can define sets of strings that
+   could not be defined by any context-free grammar. But we have not
+   yet introduced full GF—and we have remaining problems, which will
+   motivate its introduction.
+
+   String-based GF grammars are more powerful than context-free
+   grammars, but still not as expressive as we really want.
+
+   - no way to deal with gender, or agreement in general;

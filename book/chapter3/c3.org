@@ -1,0 +1,330 @@
+* Morphological variation
+  In English, nouns (like wine) are inflected for number, which is
+  either the singular (wine) or the plural (wines). The number of the
+  noun varies in agreement with the determiner, so that for instance
+  this requires a noun in the singular and these in the plural. When
+  the resulting noun phrase is used as a subject in a sentence, the
+  verb agrees with it in number.
+
+  : this wine is Italian
+  : these wines are Italian
+  
+  Number agreement is theoretically possible to express with a BNF
+  grammar: we just have to duplicate the relevant categories and rules
+  to singular and plural versions. but the result is tedious to write
+  and difficult to maintain. this can be avoided by treating
+  categories not as atomic identifiers, but as having a structure
+  consisting of a category and a parameter list. instead of:
+  
+  #+BEGIN_EXAMPLE
+  Comment ::= Item_Sg_Masc "e" Quality_Sg_Masc
+  Comment ::= Item_Sg_Fem "eM Quality_Sg_Fem
+  Comment ::= Item_Pl_Masc "sono" Quality_Pl_Masc
+  Comment ::= Item_Pl_Fem "sono" Quality_Pl_Fem
+  #+END_EXAMPLE
+  
+  this:
+
+  : Kind(n,g) ::=Kind(n,g) Quality(n,g)
+
+  The use of categories with parameters is essentially what happens in
+  *unification grammars*. The above rules are ones that could be
+  written in *Definite Clause Grammars*, although the usual syntax for
+  them in the Prolog programming language would look slightly
+  different.
+
+  Since we have divided BNF rules into abstract and concrete syntax
+  components, we have to choose which component parameters belong
+  to. Just looking at the BNF-with-parameters notation above suggests
+  that parameters belong to the abstract syntax, since they are a part
+  of the categories and hence of the category skeleton, from which we
+  extracted the abstract syntax function types. *However*, since we
+  have decided to keep the abstract syntax language-neutral, it is not
+  the proper place of parameters, because different languages use
+  different parameters.
+  
+* Parameters and tables
+  Parameters, like everything else in GF, are objects of some
+  types. These types are defined by the grammarian in a concrete
+  syntax. For this purpose, a special form of judgement is used:
+  *parameter type definitions*.
+
+  : param Number = Sg | Pl
+
+  Parameter types can be used in table types, such as:
+
+  : Number => Str
+
+  which is read, "table from numbers to strings". Table types are GF's
+  way to formalize *inflection tables*, where each value of a certain
+  parameter type is assigned a string, an *inflection form*:
+
+  : table {Sg => "pizza" ; PI => "pizze"}
+
+  To access a value in a table, the selection operator ! is used.
+
+  : > table {Sg => "pizza" ; Pl => "pizze"} ! Pl
+  : "pizze"
+
+  To express the relation of computation, we will use the notation =t
+  ⇓ v= to mean that the expression t is computed to v.
+
+  : table {Sg => "pizza" ; PI => "pizze"} ! PI ⇓ "pizze"
+
+  *note*: ⇓ is just syntactic sugar, it is not a part of GF.
+
+  Expressions with several parameters, such as Italian adjectives, can
+  be represented as tables from one feature to tables from the next 
+  feature, and so on, ending up with strings. Thus Italian adjectives have
+  inflection tables of type:
+
+  : Gender => Number => Str
+  : param Gender = Masc | Fem
+
+  #+BEGIN_EXAMPLE
+  table {Masc => table {Sg => "caldo" ; PI => "caldi"} ;
+         Fern => table {Sg => "calda" ; PI => "calde"}}
+  #+END_EXAMPLE
+
+  The parts of a table separated by semicolons are called branches. A
+  branch consists of a pattern, a double arrow =>, and a term
+  assigning a value to the pattern. It is not necessary to give all
+  parameter-value pairs in separate branches: one can also use
+  variables in patterns to compress branches together. Selection is
+  then computed by *pattern matching*. wildcard =_= is also supported:
+
+  : table {_ => table {Sg => "grave" ; PI => "gravi"}}
+
+  is a table for the adjective grave ("heavy"), which is inflected in
+  the same way for both genders.
+
+  Tables with only one branch are a common special case. GF provides
+  syntactic sugar for writing them concisely:
+
+  : \\p, ... ,q => t ≡ table {p => ... table {q => t} ... }
+
+  This notation, with a double backslash =\\=, is analogous to lambda
+  abstraction with a single backslash =\= in the same way as the
+  double arrow ~=>~ for tables is analogous to the single arrow =->=
+  for functions.
+
+* Variables /versus/ inherent features
+  Nouns in both English and Italian have both singular and plural
+  forms: one and the same noun can be rendered in both the singular
+  and the plural. We say therefore that the number is a variable
+  feature of nouns. But gender in Italian (as in many other languages)
+  attaches to nouns in a different way: a noun is either masculine or
+  feminine, instead of having both masculine and feminine forms. We
+  say therefore that gender is an *inherent feature* of Italian nouns.
+
+  Variable and inherent features are connected to each other via the
+  mechanism of *agreement*. In agreement, a variable feature of one
+  word is determined by an inherent feature of another one. For
+  instance, in the adjectival modification of nouns, the variable
+  gender of the adjective is determined by the inherent gender of the
+  noun.
+  
+  Agreement is thus asymmetric: we say that the adjective agrees with
+  the noun, rather than the other way round.
+
+* Records and record types
+  A record is a data structure that gathers together objects of possibly
+  different types. For instance,
+
+  : {s = table {Sg => "pizza" ; PI => "pizze"} ; g = Fern}
+
+  contains a table from numbers to strings and a gender. Records are
+  in GF used for storing all information that belongs to the concrete
+  syntax of and expression. In particular, inherent features are
+  represented as parameter values stored in records, as suggested by
+  the examples just shown. Variable features, in contrast, appear as
+  arguments of tables.
+
+  Just like any object in GF, records have types, called *record
+  types*.
+
+  : {s : Number => Str ; g : Gender}
+
+  The notational difference between records and record types is that
+  record types use =:= (as in all type declarations) and records use ~=~
+  (as in all value definitions).
+
+  The identifiers left of colons and equality signs are called
+  *labels*.  Each part of a record or a record type containing one
+  label and its value or type is called a *field*.
+
+  To access a value in a record, the projection operator =(.)= is used,
+  with the label as the second operand. Thus
+
+  : {s = "these" ; n = Pl}.n ⇓ Pl
+
+  : {s = table {Sg => "zia" ; Pl => "zie"} ; g = Fem}.s ! Sg ⇓ "zia"
+
+* Linearization types and agreement
+  By using tables to encode variable features and records to encode
+  inherent features, we can deal accurately with inflection and
+  agreement in concrete syntax, separately for each language. The
+  first place affected is the linearization types of categories. The
+  linearization rules are then type-checked with respect to the
+  linearization types.
+
+  Beginning with English, we assign the following linearization types
+  to the categories of the Food grammar:
+
+  #+BEGIN_EXAMPLE
+  lincat
+    Comment = {s : Str} ;
+    Item = {s : Str ; n : Number} ;
+    Kind = {s : Number => Str} ;
+    Quality = {s : Str} ;
+  #+END_EXAMPLE
+
+  We use records {s : Str}, instead of plain strings, as the simplest
+  type.  This is a good habit in GF programming, because it makes it
+  easier to modify the code if we later want to add information to
+  linearization types.
+
+  #+BEGIN_EXAMPLE
+  lin
+    This kind = {s = kind.s ! Sg ; n = Sg} ;
+    Mod qual kind = {s = table {n => qual.s ++ kind.s ! n}} ;
+  #+END_EXAMPLE
+
+  We don't want to write tables like this for all words. We rather
+  want to use the regularities of inflection that enable us to specify
+  inflection tables with less code than full tables. To do this, we
+  use functional programming.
+
+* Functional programming in GF: operation definitions
+  One way to define the linearization of the Italian adjectives
+  delizioso, italiano, etc, is to copy and paste the rule with caldo
+  in the previous section and change the stem of the adjective in each
+  new word needed.  This copying and pasting is completely mechanical;
+  therefore, a machine would probably do it better than a human
+  programmer, who is likely to forget or mistype something. The
+  software version of such a machine is a *function*: it is a general
+  rule for producing output from input in a determinate way.
+
+  GF is a functional programming language in two ways. We have already
+  seen that the abstract syntax is a system of tree-building
+  functions, marked with the keyword =fun=. These functions are rather
+  special and limited. They are what in functional programming is
+  called *constructors*: they are used for constructing trees, not for
+  computing anything. Here we will introduce functions in concrete
+  syntax, defined by a new form of judgement, *operation definitions*
+  (=oper=). To make the distinction clear, functions defined in oper
+  definitions will usually be called *operations*.
+
+  An operation is just like a function in any (typed) functional
+  programming language: it has a name, a type, and a defining
+  expression, as shown by the general form of =oper= judgements,
+
+  : oper f : t = e
+
+  #+BEGIN_EXAMPLE
+  oper regNoun : Str -> {s : Number => Str} = 
+    \word -> {s = table {Sg => word ; PI => word + MsM}} ;
+  #+END_EXAMPLE
+
+  The name of this operation is regNoun. Its type is that of functions
+  from strings to records that we have used for linearizing English
+  nouns.
+
+  It remains to explain the single plus (+). The single plus in GF is
+  the *gluing operator*, which glues two tokens into one. Thus the
+  expression "wine" + "s" can be computed further to the token
+  "wines".  The "single plus" ( + ), which combines two tokens into one
+  token, is different from the "double plus" ( ++ ), which combines two
+  lists of tokens into one list, and whose operands remain distinct
+  tokens. This is usually visible in the spacing of the strings finally
+  generated:
+  
+  : "foo" + "bar" ⇓ "foobar"
+  : "foo" ++ "bar" ⇓ "foo bar"
+
+  *note*: out spacing is in the end determined by the lexer and
+  unlexer that relate strings to token lists. Hence it is not always
+  the case that tokens are delimited by spaces.
+  
+  With the regNoun operation, we can now define some of the English
+  nouns in Food compactly:
+  
+  : lin Wine = regNoun "wine" ;
+  : lin Cheese = regNoun "cheese" ;
+
+  This is indeed the style of programming we will be aiming at in
+  functional programming: most of the code is written as applications
+  of functions defined by using lambda abstraction. It is only in the
+  definitions of these functions that tables and records are seen. In
+  the ideal case, all such functions are defined in *libraries*.
+
+* Testing inflection and operations in GF
+  When developing a grammar, it is useful to test inflection
+  separately. This can be done in the linearize command by using the
+  flag -table, which prints all branches of tables (and also all
+  record fields with their labels):
+  : > linearize -table Wine
+  : s Sg : wine
+  : s PI : wines
+
+  It is also possible to test the evaluation of arbitrary terms, by
+  the command =compute_concrete=. Since evaluation uses the
+  definitions of oper operations, which are normally thrown away in
+  the course of compilation, the import command must use the flag
+  =-retain= in order to retain the operations. Thus we do:
+  : > import -retain FoodsEng.gf
+  : > compute_concrete (regNoun "wine").s ! Pl
+  : "wines"
+
+* Partial application
+  The rule below from the Foods grammar example
+  : lin This = det Sg "this"
+  could be written equivalently as
+  : lin This kind = det Sg "this" kind
+  However, a variable appearing as the last term on both the left and
+  the right hand side of a rule is not necessary. This is not an ad
+  hoc convention, but an instance of *partial application*.
+
+* Discontinuous constituents
+  The general form of a linearization type (lincat) as presented so
+  far is a record type of the form 
+  : {s: P -> Str; q : Q}
+  where P represents the variable features and Q the inherent
+  features; this form would actually work with any number of variable
+  and inherent features, by the use of algebraic datatype constructors
+  or records. The crucial restriction is that there is just one
+  string-valued field in the record, the field s. However, there is
+  really no such restriction in GF: a linearization can be any
+  combination of strings, parameters, tables, and records.
+
+  The use of records with many strings can be used for modelling
+  discontinuous constituents. A discontinuous constituent is precisely
+  what is sounds: a constituent (i.e. part of an expression
+  corresponding to a subtree) that consists of several strings, which
+  can be separated by other strings. A prime example is provided by
+  verb phrases in many languages, including English. Verb phrases (VP)
+  appear in the most well-known rule of linguistic syntax,
+  : S ::= NP VP
+  The NP-VP format covers a vast class of sentences. But what is the
+  syntax of questions, such as /is this wine delicious/ or /does John
+  love Mary/? If we want to discern a verb phrase in them as well,
+  then it must be discontinuous: /is - delicious/ and /does - love
+  Mary/. Since in the resource grammar we want to have a common set of
+  rules that construct verb phrases for both questions and sentences,
+  we have to use records with two strings: one for the verb (verb) and
+  one for the complement (comp).
+
+  Alongside with parameters, discontinuous constituents play a crucial
+  role in multilingual grammars, since they enable the maintenance of
+  abstract grammatical concepts such as verb phrases over languages.
+  They are also language-theoretically interesting, since they enable
+  the definition of some famous non-context-free languages, as shown
+  in the exercises below.
+
+* notes
+  - whenever a GF grammar has a category named =S=, GF assumes it is
+    the start category. even when specifying another category in the
+    grammar it seems to start at =S=, unless we specify another
+    category on the REPL. ([[http://old-darcs.grammaticalframework.org/irc/freenode_%23gf_20171101.log][IRC chat]])
+
+  - [ ] boolean exercise should be finished.

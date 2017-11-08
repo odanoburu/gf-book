@@ -1,0 +1,389 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<title>c2</title>
+<!-- 2017-10-25 Qua 14:48 -->
+<meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta  name="generator" content="Org-mode" />
+<meta  name="author" content="bruno" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  pre.src-sh:before    { content: 'sh'; }
+  pre.src-bash:before  { content: 'sh'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-R:before     { content: 'R'; }
+  pre.src-perl:before  { content: 'Perl'; }
+  pre.src-java:before  { content: 'Java'; }
+  pre.src-sql:before   { content: 'SQL'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.right  { text-align: center;  }
+  th.left   { text-align: center;   }
+  th.center { text-align: center; }
+  td.right  { text-align: right;  }
+  td.left   { text-align: left;   }
+  td.center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara:nth-child(2) { display: inline; }
+  .footpara { display: block; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  /*]]>*/-->
+</style>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2013 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">c2</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. BNF</a></li>
+<li><a href="#sec-2">2. GF intro</a>
+<ul>
+<li><a href="#sec-2-1">2.1. GF module system</a></li>
+<li><a href="#sec-2-2">2.2. GF syntax</a></li>
+<li><a href="#sec-2-3">2.3. Suppression</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> BNF</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Each line in a BNF grammar is a labelled rule, which defines a
+production for some category. The general form of a rule is:
+</p>
+
+<pre class="example">
+Label . Category ::= Production
+</pre>
+
+<p>
+where a production consists of categories (unquoted identifiers) and
+tokens (quoted strings).
+</p>
+
+<ul class="org-ul">
+<li>A BNF grammar can be seen as a declarative program, which defines
+two operations: generation and parsing.
+</li>
+
+<li><code>parse</code> (p) returns an abstract syntax tree
+</li>
+
+<li>BNF does not allow us to make correspondences between grammars for
+the same domain in different languages
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> GF intro</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+solution: use GF. GF separates abstract syntax from linearization
+(concrete syntax). For example, the predication rule:
+</p>
+
+<pre class="example">
+Pred. Comment ::= Item "is" Quality
+</pre>
+
+<p>
+now becomes two rules: 
+</p>
+
+<pre class="example">
+fun Pred : Item -&gt; Quality -&gt; Comment ;
+lin Pred item quality = item ++ "is" ++ quality ;
+</pre>
+
+<p>
+The first rule, marked fun, defines Pred as a function for building
+trees. This function has a type, which corresponds to the category
+skeleton of the BNF rule. The type of Pred has Comment as its value
+type and Item and Quality as its two argument types.
+</p>
+
+<p>
+The second rule, marked lin, defines the linearization of Pred in
+terms of the linearizations of its two arguments. These
+linearizations are represented by the two variables item and
+quality. These variable names are chosen purely in documentation
+purpose; x and y would work quite as well.
+</p>
+
+<p>
+In general terms, the separation of concrete and abstract syntax
+allows three deviations from context-free grammar: 
+</p>
+<ul class="org-ul">
+<li>permutation: changing the order of constituents 
+</li>
+<li><a href="#sec-2-3">suppression</a>: omitting constituents
+</li>
+<li>reduplication: repeating constituents
+</li>
+</ul>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> GF module system</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The two main types of modules are abstract syntax and concrete
+syntax. The fun rules belong to abstract syntax modules, and the
+lin rules to concrete syntax modules. A multilingual grammar is a
+system with one abstract syntax and any number of concrete
+syntaxes.
+</p>
+
+<p>
+modules in GF have two main parts:
+</p>
+<ul class="org-ul">
+<li>a module header indicating the module type (abstract) and the
+module name (Food);
+</li>
+<li>a module body consisting of judgements.
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> GF syntax</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+BNF grammars have just one kind of rules, whereas full GF has many
+kinds, classified under different <b>forms of judgement</b> (judgement =
+definition, declaration, rule).
+</p>
+
+<p>
+the example Food abstract grammar has judgements of three forms:
+</p>
+<ul class="org-ul">
+<li>flags, flag definitions, here of the flag <code>startcat</code>, which selects
+the start category, i.e. the one in which parsing and generation
+are performed by default;
+</li>
+<li><code>cat</code>, category declarations, telling what categories (types of
+trees) there are;
+</li>
+<li><code>fun</code>, function declarations, telling what tree building functions
+there are.
+</li>
+</ul>
+
+<p>
+while the example Food concrete grammar has judgements of two forms:
+</p>
+<ul class="org-ul">
+<li><code>lincat</code>, linearization type definitions, saying what type of
+objects linearization produces from trees of each category;
+</li>
+<li><code>lin</code>, linearization rules, telling how trees are linearized.
+</li>
+</ul>
+
+<p>
+A concrete syntax is <b>complete</b> with respect to an abstract syntax,
+if it contains:
+</p>
+<ul class="org-ul">
+<li>a lincat for each cat;
+</li>
+<li>a lin for each fun.
+</li>
+</ul>
+
+<p>
+It is <b>well-typed</b> if:
+</p>
+<ul class="org-ul">
+<li>all types used in lincat judgements are valid linearization
+types;
+</li>
+<li>all linearization rules define well-typed functions.
+</li>
+</ul>
+
+<p>
+<b>Well-typed</b> functions in lin rules are defined in terms of the
+linearization types: if
+</p>
+<pre class="example">
+fun f : A1 -&gt; ... -&gt; An -&gt; A
+</pre>
+<p>
+then
+</p>
+<pre class="example">
+lin f x1 ... xn = t
+</pre>
+<p>
+if t is an object of the linearization type of A under the
+assumption that each xi is an object of the linearization type of
+Ai.
+</p>
+
+<p>
+Quoted string literals ("foo") are of type <code>Str</code>, and the
+concatenation (<code>++</code>) of two Strs is likewise of type <code>Str</code>.
+</p>
+
+<p>
+<b>Judgements</b> are terminated by semicolons. A shorthand permits the
+sharing of the keyword in subsequent judgements, for example:
+</p>
+<pre class="example">
+catC;D === cat C; cat D
+</pre>
+
+<p>
+Each judgement introduces a <b>name</b>, which is the first identifier in
+the judgement. Each name can only be introduced once in the same
+module (that is, as the first identifier in a judgement); local
+variables such as those following the name introduced in a lin
+judgement can be reused in other judgements.
+</p>
+
+<p>
+Names are in <b>scope</b> in the rest of the module, i.e. usable in the
+other judgements of the module (subject to type restrictions, of
+course). The order of judgements in a module is free. In
+particular, a name need not be introduced before it is used, and
+judgements of the same form need not be grouped together.
+</p>
+
+<p>
+In language-theoretical terms, GF is stronger than context-free in
+<b>weak generative capacity</b>, i.e. the capacity to define sets of
+strings. Suppression and reduplication have to do with the <b>strong
+generative capacity</b>, i.e. the capacity to define relations between
+trees and strings, and not just strings.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Suppression</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: bruno</p>
+<p class="date">Created: 2017-10-25 Qua 14:48</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 25.2.1 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
