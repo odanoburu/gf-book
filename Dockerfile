@@ -23,3 +23,5 @@ ENV LANG C.UTF-8
 
 ## copy the /src directory's contents into the container at directory
 ADD . /app/
+
+CMD ["gf"]
