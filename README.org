@@ -1,3 +1,10 @@
 * [[http://www.grammaticalframework.org][Grammatical Framework]]: Programming with Multilingual Grammars
+
   exercises from the [[http://www.grammaticalframework.org/gf-book/][book]] by Aarne Ranta. code examples are available
-  from [[http://www.grammaticalframework.org/gf-book/examples][here]] (I'm modifying them as I go about the exercises).
+  from [[http://www.grammaticalframework.org/gf-book/examples][here]].
+
+** Directory contents
+   
+   There's one directory for each chapter. I was modifying the
+   exercises inplace for the first few chapters, and now I'm creating
+   subdirectories for every exercise.
