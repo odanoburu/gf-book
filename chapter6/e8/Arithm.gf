@@ -10,4 +10,4 @@ abstract Arithm = {
     EvenO : (n : Nat) -> Odd n  -> Even (Succ n) ;
     OddE  : (n : Nat) -> Even n -> Odd  (Succ n) ;
 }
--- Arithm> gt (EvenO ? ?)
+-- Arithm> gt -depth=10 -number=3 (EvenO ? ?)
