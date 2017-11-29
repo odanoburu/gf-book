@@ -1,3 +1,5 @@
 concrete ArithmEng of Arithm = ArithmI with
   (Syntax = SyntaxEng),
-  (LexArithm = LexArithmEng) ;
+  (LexArithm = LexArithmEng),
+  (Symbolic = SymbolicEng),
+  (Predef=Predef);
