@@ -4,17 +4,15 @@ concrete SmartEng of Smart = {
     Kind      = {s : Str} ;
     Device    = {s : Str} ;
     Action    = {s : Str} ;
-    Togglable = {} ;
+    Class = {} ;
+    Instance = {} ;
   lin
-    Act _ act dev = {s = act.s ++ dev.s} ;
+    Act _ _ _ act dev = {s = act.s ++ dev.s} ;
     The k         = {s = "the" ++ k.s}   ;
     Light         = {s = "light"}        ;
     Fan           = {s = "fan"}          ;
     Piano         = {s = "piano"}        ;
     Alarm         = {s = "alarm"}        ;
-    Dim           = {s = "dim"}          ;
-    Rotate        = {s = "rotate"}       ;
     Play          = {s = "play"}         ;
-    Raise         = {s = "raise"}        ;
-    Toggle _ _    = {s = "toggle"}       ;
+    Toggle    = {s = "toggle"}       ;
 }

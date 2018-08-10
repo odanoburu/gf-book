@@ -7,15 +7,13 @@ abstract Smart = {
     Class ; Instance Class Kind ;
     Kind ;
   fun
-    Act     : (k : Kind) -> Action k -> Device k -> Command ;
-    The     : (k : Kind) -> Device k ; -- the light
-    Toggle  : (k : Kind) -> Togglable k -> Action k ;
-    Dim     : Action Light ;
-    Rotate  : Action Fan ;
-    Play    : Action Piano ;
-    Raise   : Action Alarm ;
-    t_light : Togglable Light ;
-    t_fan   : Togglable Fan ;
-    t_alarm : Togglable Alarm ;
+    Act                      : (k : Kind) -> (c : Class) -> Instance c k -> Action c -> Device k -> Command ;
+    The                      : (k : Kind) -> Device k ; -- the light
+    Toggle                   : Action Togglable ;
+    Play                     : Action Playable ;
+    Playable                 : Class ;
+    Togglable                : Class ;
+    PianoP                   : Instance Playable Piano ;
+    LightT                   : Instance Togglable Light ;
     Light, Fan, Piano, Alarm : Kind ;
 }
